@@ -1,0 +1,13 @@
+{
+  "name": "@pixelimage/example",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite --port 3333 --open",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "pixel-image": "workspace:*"
+  }
+}
