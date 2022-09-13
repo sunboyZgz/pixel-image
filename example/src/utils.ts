@@ -14,20 +14,20 @@ function patchImageData(
 ): void {
   const { scale } = opt;
   let gap = Math.round(1 / scale);
-  const [w, s] = size;
-  if (w % gap != 0 || s % gap != 0) {
+  const [w, h] = size;
+  if (w % gap != 0 || h % gap != 0) {
     if (gap > 8) {
-      while (w % gap != 0 || s % gap != 0) {
+      while (w % gap != 0 || h % gap != 0) {
         gap = gap >> 1;
       }
     } else {
-      while (w % gap != 0 || s % gap != 0) {
+      while (w % gap != 0 || h % gap != 0) {
         gap--;
       }
     }
   }
-  const result = new Uint8ClampedArray(data.length / gap / gap);
-  worker.postMessage([data, result, w, s, gap]);
+  
+  worker.postMessage([data, w, h, gap]);
   return;
 }
 
@@ -64,8 +64,8 @@ function my_patch(c: DrawContext, opt: option) {
     // const data_url = tempCanvas.toDataURL();
     // temp_img.src = data_url;
     ctx.clearRect(0, 0, w, h);
-    canvas.width = dw / scale;
-    canvas.height = dh / scale;
+    canvas.width = dw;
+    canvas.height = dh;
     ctx.putImageData(imageData, 0, 0);
     // temp_img.onload = () => {
     //   canvas.width = temp_img.width / scale;
@@ -118,7 +118,7 @@ function default_patch(c: DrawContext, opt: option) {
 
 const default_methods: Draw = {
   draw: default_draw,
-  patch: default_patch,
+  patch: my_patch,
 };
 
 class DrawContext {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { DrawContext } from "pixel-image";
-// import { DrawContext } from "./utils";
+// import { DrawContext } from "pixel-image";
+import { DrawContext } from "./utils";
 const container = ref<HTMLElement>();
 
 const putImgToSource = function (
