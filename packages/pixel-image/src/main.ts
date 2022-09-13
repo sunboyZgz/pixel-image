@@ -26,7 +26,7 @@ function patchImageData(
       }
     }
   }
-  
+
   worker.postMessage([data, w, h, gap]);
   return;
 }
@@ -49,37 +49,21 @@ function my_patch(c: DrawContext, opt: option) {
   const { scale } = opt;
   const w = img.naturalWidth;
   const h = img.naturalHeight;
-  // tempCanvas.width = w * scale;
-  // tempCanvas.height = h * scale;
-  // tempCtx.drawImage(img, 0, 0, w * scale, h * scale);
-  let imageData = ctx.getImageData(0, 0, w, h);
-  console.log(imageData);
-
+  tempCanvas.width = w;
+  tempCanvas.height = h;
+  tempCtx.clearRect(0, 0, w, h);
+  tempCtx.drawImage(img, 0, 0, w, h);
+  let imageData = tempCtx.getImageData(0, 0, w, h);
   worker.onmessage = (m) => {
     const [imageData, dw, dh] = m.data;
     // console.log(data);
     // imageData = new ImageData(data, dw, dh);
     console.log(imageData);
-    // const temp_img = new Image();
-    // const data_url = tempCanvas.toDataURL();
-    // temp_img.src = data_url;
+
     ctx.clearRect(0, 0, w, h);
     canvas.width = dw;
     canvas.height = dh;
     ctx.putImageData(imageData, 0, 0);
-    // temp_img.onload = () => {
-    //   canvas.width = temp_img.width / scale;
-    //   canvas.height = temp_img.height / scale;
-    //   ctx.imageSmoothingEnabled = false;
-    //   document.body.appendChild(temp_img);
-    //   ctx.drawImage(
-    //     temp_img,
-    //     0,
-    //     0,
-    //     temp_img.width / scale,
-    //     temp_img.height / scale
-    //   );
-    // };
   };
   patchImageData(imageData.data, [w, h], opt);
   // ctx.drawImage(img, 0, 0, canvas.width * scale, canvas.height * scale);
