@@ -56,18 +56,12 @@ function my_patch(c: DrawContext, opt: option) {
   let imageData = tempCtx.getImageData(0, 0, w, h);
   worker.onmessage = (m) => {
     const [imageData, dw, dh] = m.data;
-    // console.log(data);
-    // imageData = new ImageData(data, dw, dh);
-    console.log(imageData);
-
     ctx.clearRect(0, 0, w, h);
     canvas.width = dw;
     canvas.height = dh;
     ctx.putImageData(imageData, 0, 0);
   };
   patchImageData(imageData.data, [w, h], opt);
-  // ctx.drawImage(img, 0, 0, canvas.width * scale, canvas.height * scale);
-  // ctx.putImageData(imageData, canvas.width, canvas.height);
 }
 
 function default_patch(c: DrawContext, opt: option) {
@@ -96,8 +90,6 @@ function default_patch(c: DrawContext, opt: option) {
     );
   };
   patchImageData(imageData.data, [w, h], opt);
-  // ctx.drawImage(img, 0, 0, canvas.width * scale, canvas.height * scale);
-  // ctx.putImageData(imageData, canvas.width, canvas.height);
 }
 
 const default_methods: Draw = {
