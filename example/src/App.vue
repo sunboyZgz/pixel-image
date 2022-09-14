@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 // import { DrawContext } from "pixel-image";
-import { DrawContext } from "../../packages/pixel-image/src/main";
+import {
+  DrawContext,
+  canvasToImage,
+} from "../../packages/pixel-image/src/main";
+import { download } from "./utils";
 const container = ref<HTMLElement>();
 
+let filename = "";
 const putImgToSource = function (
   input: HTMLInputElement,
   ev: InputEvent,
   img: HTMLImageElement
 ) {
   const f = input.files && input.files[0];
+  filename = f?.name || "";
   let src: string | undefined;
   if (f) {
     src = URL.createObjectURL(f);
@@ -35,6 +41,13 @@ const patchImage = () => {
     undefined;
   opt ? drawContext.Patch(opt) : drawContext.Patch();
 };
+
+const downloadImage = () => {
+  const canvas = drawContext.elm;
+  canvasToImage(canvas, (_, img) => {
+    download(img, filename);
+  });
+};
 onMounted(() => {
   const input = document.getElementById("image-upload") as HTMLInputElement;
   const img = document.getElementById("source") as HTMLImageElement;
@@ -53,9 +66,10 @@ onMounted(() => {
 <template>
   <div>pixel-image</div>
   <div>
-    <input id="image-upload" type="file" />
+    <input accept="image/*" id="image-upload" type="file" />
     <input id="scale" type="text" />
     <button @click="patchImage">patch</button>
+    <button @click="downloadImage">download</button>
   </div>
   <img id="source" width="300" height="300" />
   <div ref="container"></div>

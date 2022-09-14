@@ -46,7 +46,6 @@ let tempCtx = tempCanvas.getContext("2d")!;
 //todo: for more flexible custom control
 function my_patch(c: DrawContext, opt: option) {
   const { ctx, elm: canvas, img } = c;
-  const { scale } = opt;
   const w = img.naturalWidth;
   const h = img.naturalHeight;
   tempCanvas.width = w;
@@ -72,7 +71,6 @@ function default_patch(c: DrawContext, opt: option) {
   tempCanvas.width = w * scale;
   tempCanvas.height = h * scale;
   tempCtx.drawImage(img, 0, 0, w * scale, h * scale);
-  let imageData = ctx.getImageData(0, 0, w, h);
   const temp_img = new Image();
   const data_url = tempCanvas.toDataURL();
   temp_img.src = data_url;
@@ -89,12 +87,24 @@ function default_patch(c: DrawContext, opt: option) {
       temp_img.height / scale
     );
   };
-  patchImageData(imageData.data, [w, h], opt);
+}
+
+function canvasToImage(
+  c: HTMLCanvasElement,
+  cb?: (e: Event, img: HTMLImageElement) => void
+): HTMLImageElement {
+  const image = document.createElement("img");
+  const url = c.toDataURL();
+  image.src = url;
+  image.onload = function (ev: Event) {
+    cb && cb(ev, image);
+  };
+  return image;
 }
 
 const default_methods: Draw = {
   draw: default_draw,
-  patch: my_patch,
+  patch: default_patch,
 };
 
 class DrawContext {
@@ -128,4 +138,4 @@ class DrawContext {
   }
 }
 
-export { DrawContext, default_patch, default_draw, my_patch };
+export { DrawContext, default_patch, default_draw, my_patch, canvasToImage };
